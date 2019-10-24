@@ -4,7 +4,7 @@ var nodes = [
   for (var i = 0; i < 15; i++){
     for (var j = 0; j < 8; j++){
       for (var k = 0; k < 7; k++){
-        nodes.push({x:i*20+10, y:j*20+10, z:k*20+10});
+        nodes.push({x:i*30+10*k+10, y:j*30+10*k+10, z:k*20+10});
       }
     }
   }
@@ -22,7 +22,7 @@ vis.selectAll("circle.nodes")
    .attr("cy", function(d) { return d.y; })
    .attr("cz", function(d) { return d.z; })
    .attr("r", "2px")
-   .attr("fill", "red")
+   .attr("fill", "blue")
 }
 function createArray(length) {
     var arr = new Array(length || 0),
