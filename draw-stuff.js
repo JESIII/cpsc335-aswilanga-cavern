@@ -49,12 +49,12 @@ for (var i = 0; i < 15; i++){
   }
 }
 myArr[5][5][5] = "red";
-
 function sumFunc(one, two, three){
   var sum = one + two + three;
   return sum;
 }
-function color(one, two, three){
+console.log("here");
+function colorNodes(one, two, three){
   var sum = one + two + three;
   for (var i = 0; i < 15; i++){
     for (var j = 0; j < 8; j++){
@@ -63,9 +63,23 @@ function color(one, two, three){
         if (one <= 15 || two <= 8 || three <= 7 && one != i && two != j && three != k){
           if (sumFunc(i, j, k) == sum){
             if (i == one && k != three && j != two || i != one && k == three && j != two || i != one && k != three && j == two){
-              if (i == 0 && one != 0 || i == maxone && one != maxone || j == 0 && two != 0 || j == maxtwo && two != maxtwo || k == 0 && three != 0 || k == maxthree && three != maxthree ){
-                myArr[i][j][k] = "red";
-                console.log("(" + i + ", " + j + ", " + k + ") " + myArr[i][j][k]);
+              if (i != maxone && i != 0){
+                if (i!=one){
+                  myArr[i][j][k] = "red";
+                  console.log("(" + i + ", " + j + ", " + k + ") " + myArr[i][j][k]);
+                }
+              }
+              else if(j != maxtwo && j != 0){
+                if (i!=two){
+                  myArr[i][j][k] = "red";
+                  console.log("(" + i + ", " + j + ", " + k + ") " + myArr[i][j][k]);
+                }
+              }
+              else if(k != maxthree && k != 0){
+                if (k!=three){
+                  myArr[i][j][k] = "red";
+                  console.log("(" + i + ", " + j + ", " + k + ") " + myArr[i][j][k]);
+                }
               }
             }
           }
