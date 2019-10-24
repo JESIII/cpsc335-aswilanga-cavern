@@ -1,132 +1,65 @@
-//John Scales
-//CWID 888865730
-//Class Number 335-04
-//13602 Loumont st.
-//Whittier, CA 90601
-//24 September 2019
-//Turk & Propp's Ant #12
-//This file contains al of the functions for js-1.html
 
-// Draw stuff
-// ------------------------------------------------------------
-function draw_triangle( rctx, rp1x, rp1y, rp2x, rp2y, rp3x, rp3y)
-{
-    rctx.save( );
+function drawStuff(){
+var vis = d3.select("#graph")
+            .append("svg")
+.attr("width", 800).attr("height", 800);
 
-    // BL Triangle.
-    rctx.beginPath( );
-    rctx.moveTo( rp1x*10, rp1y*10 ); // 50, 250
-    rctx.lineTo( rp2x*10, rp2y*10 ); // 50, 350
-    rctx.lineTo( rp3x*10, rp3y *10); // 150, 350
-    rctx.closePath();
-    rctx.stroke();
-    rctx.fillStyle = 'white';
-    rctx.fill();
-    rctx.restore( );
+var nodes = [
+    {x: 10, y: 80, z:60},
+    {x: 10, y: 10, z:40},
+    {x: 140, y: 50, z:80}
+  ]
+
+vis.selectAll("circle.nodes")
+   .data(nodes)
+   .enter()
+   .append("svg:circle")
+   .attr("cx", function(d) { return d.x; })
+   .attr("cy", function(d) { return d.y; })
+   .attr("cz", function(d) { return d.z; })
+   .attr("r", "8px")
+   .attr("fill", "red")
 }
-function Create2DArray(rows) {
-  var arr = [];
+function createArray(length) {
+    var arr = new Array(length || 0),
+        i = length;
 
-  for (var i=0;i<rows;i++) {
-     arr[i] = [];
+    if (arguments.length > 1) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        while(i--) arr[length-1 - i] = createArray.apply(this, args);
+    }
+
+    return arr;
+}
+function color(one, two, three){
+  var sum = one + two + three;
+  if (one <= 15 || two <= 8 || three <= 7){
+    myArr[one][two][three] = "red";
   }
-  for (var i = 0; i<rows; i++){
-    for (var j = 0; j<rows; j++){
-      arr[i][j] = 0;
+}
+function idLimit(one, two, three){
+  var overlimit = true;
+}
+function singleSame(one, two, three){
+  
+}
+function pathFinder(startNode, destNode){
+
+}
+var myArr = createArray(15, 8, 7);
+for (var i = 0; i < 15; i++){
+  for (var j = 0; j < 8; j++){
+    for (var k = 0; k < 7; k++){
+      myArr[i][j][k] =
     }
   }
-  return arr;
 }
-async function draw_ant( ctx , posx, posy, color)
-{
-	ctx.save( );
-	if (color == 0) fill = 'black';
-	if (color == 1) fill = 'red';
-	if (color == 2) fill = 'yellow';
-	if (color == 3) fill = 'blue';
-  ctx.beginPath();
-  ctx.fillStyle = fill;
-  ctx.rect(posx*10 + 1, posy*10 + 2, 7, 7);
-  ctx.fill( );
-  ctx.stroke( );
-  ctx.restore( );
-}
-
-function goleft(ant, ctx){
-  draw_ant(ctx, ant.x, ant.y, ant.color);
-	if(ant.dir == 0){
-		ant.dir = 3;
-    draw_triangle(context, ant.x+0.1- 1, ant.y+0.4, ant.x + .8- 1, ant.y+.1, ant.x+.8- 1, ant.y+.8);
-
-		ant.x = ant.x - 1;
-	}
-	else if(ant.dir == 1){
-		ant.dir = 0;
-    draw_triangle(context, ant.x+0.4, ant.y+0.1- 1, ant.x + .8, ant.y+.8- 1, ant.x+0.1, ant.y+.8- 1);
-
-		ant.y = ant.y - 1;
-	}
-	else if(ant.dir == 2){
-		ant.dir = 1;
-    draw_triangle(context, ant.x+0.1+ 1, ant.y+0.1, ant.x + .8+ 1, ant.y+.4, ant.x+.1+ 1, ant.y+.8);
-
-		ant.x = ant.x + 1;
-	}
-	else if(ant.dir == 3){
-		ant.dir = 2;
-    draw_triangle(context, ant.x+0.1, ant.y+0.1+ 1, ant.x + .8, ant.y+.1+ 1, ant.x+.4, ant.y+.8+ 1);
-		ant.y = ant.y + 1;
-	}
-}
-function goright(ant, ctx){
-  draw_ant(ctx, ant.x, ant.y, ant.color);
-	if(ant.dir == 0){
-		ant.dir = 1;
-    draw_triangle(context, ant.x+0.1+ 1, ant.y+0.1, ant.x + .8+ 1, ant.y+.4, ant.x+.1+ 1, ant.y+.8);
-		ant.x = ant.x + 1;
-	}
-	else if(ant.dir == 1){
-		ant.dir = 2;
-    draw_triangle(context, ant.x+0.1, ant.y+0.1+ 1, ant.x + .8, ant.y+.1+ 1, ant.x+.4, ant.y+.8+ 1);
-		ant.y = ant.y + 1;
-	}
-	else if(ant.dir == 2){
-		ant.dir = 3;
-    draw_triangle(context, ant.x+0.1- 1, ant.y+0.4, ant.x + .8- 1, ant.y+.1, ant.x+.8- 1, ant.y+.8);
-		ant.x = ant.x - 1;
-	}
-	else if(ant.dir == 3){
-		ant.dir = 0;
-    draw_triangle(context, ant.x+0.4, ant.y+0.1- 1, ant.x + .8, ant.y+.8- 1, ant.x+0.1, ant.y+.8- 1);
-		ant.y = ant.y - 1;
-	}
-}
-
-// =====================================================  draw_grid ====
-function draw_grid( rctx, rminor, rmajor, rstroke, rfill )
-{
-    rctx.save( );
-    rctx.strokeStyle = rstroke;
-    rctx.fillStyle = rfill;
-    let width = rctx.canvas.width;
-    let height = rctx.canvas.height;
-    for ( var ix = 0; ix < width; ix += rminor )
-    {
-        rctx.beginPath( );
-        rctx.moveTo( ix, 0 );
-        rctx.lineTo( ix, height );
-        rctx.lineWidth = ( ix % rmajor == 0 ) ? .5 : .5;
-        rctx.stroke( );
-        if ( ix % rmajor == 0 ) { rctx.fillText( ix/10, ix, 10 ); }
+for (var i = 0; i < 15; i++){
+  for (var j = 0; j < 8; j++){
+    for (var k = 0; k < 7; k++){
+      console.log(myArr[i][j][k]);
     }
-    for ( var iy = 0; iy < height; iy += rminor )
-    {
-        rctx.beginPath( );
-        rctx.moveTo( 0, iy );
-        rctx.lineTo( width, iy );
-        rctx.lineWidth = ( iy % rmajor == 0 ) ? .5 : .5;
-        rctx.stroke( );
-        if ( iy % rmajor == 0 ) {rctx.fillText( iy/10, 0, iy + 10 );}
-    }
-    rctx.restore( );
+  }
 }
+var startNode = "F00";
+var destNode = "555";
