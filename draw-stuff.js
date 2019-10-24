@@ -88,3 +88,7 @@ function colorNodes(one, two, three){
     }
   }
 }
+//make function to move to the next location with the lowest residue
+function residue(){
+  
+}
