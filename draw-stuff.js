@@ -1,14 +1,18 @@
 
+var nodes = [
+  ]
+  for (var i = 0; i < 15; i++){
+    for (var j = 0; j < 8; j++){
+      for (var k = 0; k < 7; k++){
+        nodes.push({x:i*20+10, y:j*20+10, z:k*20+10});
+      }
+    }
+  }
 function drawStuff(){
 var vis = d3.select("#graph")
             .append("svg")
-.attr("width", 800).attr("height", 800);
+.attr("width", 1000).attr("height", 1000);
 
-var nodes = [
-    {x: 10, y: 80, z:60},
-    {x: 10, y: 10, z:40},
-    {x: 140, y: 50, z:80}
-  ]
 
 vis.selectAll("circle.nodes")
    .data(nodes)
@@ -17,7 +21,7 @@ vis.selectAll("circle.nodes")
    .attr("cx", function(d) { return d.x; })
    .attr("cy", function(d) { return d.y; })
    .attr("cz", function(d) { return d.z; })
-   .attr("r", "8px")
+   .attr("r", "2px")
    .attr("fill", "red")
 }
 function createArray(length) {
@@ -90,5 +94,5 @@ function colorNodes(one, two, three){
 }
 //make function to move to the next location with the lowest residue
 function residue(){
-  
+
 }
