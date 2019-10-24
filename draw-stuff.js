@@ -31,35 +31,46 @@ function createArray(length) {
 
     return arr;
 }
-function color(one, two, three){
-  var sum = one + two + three;
-  if (one <= 15 || two <= 8 || three <= 7){
-    myArr[one][two][three] = "red";
-  }
-}
-function idLimit(one, two, three){
-  var overlimit = true;
-}
-function singleSame(one, two, three){
-  
-}
-function pathFinder(startNode, destNode){
-
-}
+var maxone = 15;
+var maxtwo = 8;
+var maxthree = 7;
+var startNode1 = 15;
+var startNode2 = 0;
+var startNode3 = 0;
+var destNode1 = 5;
+var destNode2 = 5;
+var destNode3 = 5;
 var myArr = createArray(15, 8, 7);
 for (var i = 0; i < 15; i++){
   for (var j = 0; j < 8; j++){
     for (var k = 0; k < 7; k++){
-      myArr[i][j][k] =
+      myArr[i][j][k] = "black"
     }
   }
 }
-for (var i = 0; i < 15; i++){
-  for (var j = 0; j < 8; j++){
-    for (var k = 0; k < 7; k++){
-      console.log(myArr[i][j][k]);
+myArr[5][5][5] = "red";
+
+function sumFunc(one, two, three){
+  var sum = one + two + three;
+  return sum;
+}
+function color(one, two, three){
+  var sum = one + two + three;
+  for (var i = 0; i < 15; i++){
+    for (var j = 0; j < 8; j++){
+      for (var k = 0; k < 7; k++){
+        var sum = one + two + three;
+        if (one <= 15 || two <= 8 || three <= 7 && one != i && two != j && three != k){
+          if (sumFunc(i, j, k) == sum){
+            if (i == one && k != three && j != two || i != one && k == three && j != two || i != one && k != three && j == two){
+              if (i == 0 && one != 0 || i == maxone && one != maxone || j == 0 && two != 0 || j == maxtwo && two != maxtwo || k == 0 && three != 0 || k == maxthree && three != maxthree ){
+                myArr[i][j][k] = "red";
+                console.log("(" + i + ", " + j + ", " + k + ") " + myArr[i][j][k]);
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
-var startNode = "F00";
-var destNode = "555";
