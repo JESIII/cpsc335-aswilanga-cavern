@@ -16,10 +16,12 @@ canvas {
   background-color: Black;
 }
 .node {
-  stroke: #fff;
-  stroke-width: 1.5px;
+    fill: #FF0000;
+    stroke: #8B0000;
+    stroke-width: 2px;
 }
+
 .link {
-  stroke: #999;
-  stroke-opacity: .6;
+    stroke: #777;
+    stroke-width: 2px;
 }
