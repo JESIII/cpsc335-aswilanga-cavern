@@ -19,11 +19,14 @@ This file contains all of the html for project 2.
 <h3>A visual demonstration of a search algorithm</h3>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="./draw-stuff.js"></script>
-<canvas id="rotation" width="600" height="600"></canvas>
+<canvas id="rotation" width="800" height="560"></canvas>
 <script>
   var canvas = document.getElementById( "rotation" );
   var context = canvas.getContext( "2d" );
+  myGraph();
   colorNodes(startNode1, startNode2, startNode3);
+  //myGraphColor();
+  //console.log(myArr);
 </script>
 
 </body>
