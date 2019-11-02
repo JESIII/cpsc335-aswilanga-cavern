@@ -19,7 +19,7 @@ This file contains all of the html for project 2.
 <h3>A visual demonstration of a search algorithm</h3>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="./draw-stuff.js"></script>
-<canvas id="rotation" width="800" height="560"></canvas>
+<canvas id="rotation" width="1000" height="650"></canvas>
 <script>
   var canvas = document.getElementById( "rotation" );
   var context = canvas.getContext( "2d" );
@@ -27,6 +27,46 @@ This file contains all of the html for project 2.
   colorNodes(startNode1, startNode2, startNode3);
   //myGraphColor();
   //console.log(myArr);
+  var counter = 0;
+//FSM
+  const loopDrawRect = setInterval(() => {
+    var x = nodestodraw[counter].x;
+    var y = nodestodraw[counter].y;
+    var z = nodestodraw[counter].z;
+    var prevx = nodestodraw[counter].fromx;
+    var prevy = nodestodraw[counter].fromy;
+    var prevz = nodestodraw[counter].fromz;
+    var msg = "temp";
+    if(nodestodraw[counter].status == 'candidate'){
+      draw_room(context, 'blue', 'blue', x, y, z);
+      drawLine(context,'blue',prevx, prevy, prevz,x, y, z);
+      drawTxt(context, x, y, z);
+      msg = "Room " + x + y + z + " is a " + nodestodraw[counter].status + ".";
+    }
+    else if(nodestodraw[counter].status == 'red'){
+      draw_room(context, 'red', 'red', x, y, z);
+      drawLine(context,'red',prevx, prevy, prevz,x, y, z);
+      drawTxt(context, x, y, z);
+      msg = ""+x + y + z + " has least residue, moving there.";
+      if(x == 5 && y == 5 && z == 5){
+        msg = msg + "We made it!";
+      }
+    }
+    else if(nodestodraw[counter].status == 'start'){
+      draw_room(context, 'green', 'green', x, y, z);
+      drawTxt(context, x, y, z);
+      msg = ""+x + y + z +" is the starting room.";
+    }
+    else{
+
+    }
+
+    draw_text(context, msg, 760, 10 + 10*counter);
+    counter += 1;
+    if (counter == nodestodraw.length){
+      clearInterval(loopDrawRect);
+    }
+  }, 700)
 </script>
 
 </body>

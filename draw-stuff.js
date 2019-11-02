@@ -11,6 +11,14 @@ var destNode1 = 5;
 var destNode2 = 5;
 var destNode3 = 5;
 var myArr = createArray(15, 8, 7);
+function draw_text( ctx, rtext, x, y )
+{
+    ctx.save( );
+    context.fillStyle = 'lightgrey'
+    context.font = "10px Arial"
+    context.fillText( rtext, x, y);
+    ctx.restore( );
+}
 function drawTxt(ctx,x,y,z){
   var xtxt;
   switch(x){
@@ -87,26 +95,10 @@ function drawLine(ctx, stroke, x1, y1,z1, x2,y2,z2){
     ctx.save( );
     ctx.beginPath();
     ctx.strokeStyle = stroke;
-    ctx.moveTo(x1*40+20+z1*40, y1*40+20+z1*40);
-    ctx.lineTo(x2*40+20+z2*40, y2*40+20+z2*40);
+    ctx.moveTo(x1*40+20+z1*40+2, y1*40+20+z1*40+2);
+    ctx.lineTo(x2*40+20+z2*40+2, y2*40+20+z2*40+2);
     ctx.stroke();
     ctx.restore();
-}
-function blackArray(){
-  for (var i = 0; i < 15; i++){
-    for (var j = 0; j < 8; j++){
-      for (var k = 0; k < 7; k++){
-        myArr[i][j][k] = "black"
-      }
-    }
-  }
-}
-function wait(ms)
-{
-var d = new Date();
-var d2 = null;
-do { d2 = new Date(); }
-while(d2-d < ms);
 }
 function createArray(length) {
     var arr = new Array(length || 0),
@@ -123,13 +115,16 @@ function sumFunc(one, two, three){
   var sum = one + two + three;
   return sum;
 }
+var nodestodraw = [];
 console.log("Starting search");
 var lowresi = 15, lowresj = 0, lowresk = 0, res;
+nodestodraw.push({x:lowresi,y:lowresj,z:lowresk,status:'start'});
 var lowres = Math.abs(lowresi - lowresj) + Math.abs(lowresj - lowresk) + Math.abs(lowresk - lowresi);
 var residues;
 var previ, prevj, prevk;
-var curr = 0;
+//var curr = 0;
 function colorNodes(one, two, three){
+  if (one == 5 && two == 5 && three == 5)return;
   if (one == previ && two == prevj && three == prevk){
     console.log("Cannot move closer to 5,5,5");
     return;
@@ -151,9 +146,7 @@ function colorNodes(one, two, three){
                 if (i!=one){
                   if (myArr[i][j][k]!="red"){
                     myArr[i][j][k] = "Candidate";
-                    draw_room(context, 'blue', 'blue', i, j, k);
-                    drawLine(context,'blue',previ,prevj,prevk,i,j,k);
-                    drawTxt(context, i, j,k);
+                    nodestodraw.push({x:i,y:j,z:k,status:'candidate',fromx:previ,fromy:prevj, fromz:prevk});
                   }
                   console.log("(" + i + ", " + j + ", " + k + ") " + myArr[i][j][k]);
                   res = Math.abs(i - j) + Math.abs(j - k) + Math.abs(k - i);
@@ -166,11 +159,11 @@ function colorNodes(one, two, three){
                     lowresk = k;
                     console.log("Moving to "+ "(" + lowresi + ", " + lowresj + ", " + lowresk + ")");
                     myArr[i][j][k] = "red";
-                    drawLine(context,'red',previ,prevj,prevk,i,j,k);
-                    draw_room(context, 'red', 'red', i, j, k);
-                    drawTxt(context, i, j,k);
-                    curr++;
-                    colorNodes(lowresi, lowresj, lowresk);
+                    nodestodraw.push({x:i,y:j,z:k,status:'red',fromx:previ,fromy:prevj, fromz:prevk});
+                    if (previ != 5 && prevj != 5 && prevk != 5){
+                      colorNodes(lowresi, lowresj, lowresk);
+                    }
+                    return;
                   }
                 }
               }
@@ -178,9 +171,7 @@ function colorNodes(one, two, three){
                 if (i!=two){
                   if (myArr[i][j][k]!="red"){
                     myArr[i][j][k] = "Candidate";
-                    draw_room(context, 'blue', 'blue', i, j, k);
-                    drawLine(context,'blue',previ,prevj,prevk,i,j,k);
-                    drawTxt(context, i, j,k);
+                    nodestodraw.push({x:i,y:j,z:k,status:'candidate',fromx:previ,fromy:prevj, fromz:prevk});
                   }
                   console.log("(" + i + ", " + j + ", " + k + ") " + myArr[i][j][k]);
                   res = Math.abs(i - j) + Math.abs(j - k) + Math.abs(k - i);
@@ -193,11 +184,11 @@ function colorNodes(one, two, three){
                     lowresk = k;
                     console.log("Moving to "+ "(" + lowresi + ", " + lowresj + ", " + lowresk + ")");
                     myArr[i][j][k] = "red";
-                    drawLine(context,'red',previ,prevj,prevk,i,j,k);
-                    draw_room(context, 'red', 'red', i, j, k);
-                    drawTxt(context, i, j,k);
-                    curr++;
-                    colorNodes(lowresi, lowresj, lowresk);
+                    nodestodraw.push({x:i,y:j,z:k,status:'red',fromx:previ,fromy:prevj, fromz:prevk});
+                    if (previ != 5 && prevj != 5 && prevk != 5){
+                      colorNodes(lowresi, lowresj, lowresk);
+                    }
+                    return;
                   }
                 }
               }
@@ -205,9 +196,7 @@ function colorNodes(one, two, three){
                 if (k!=three){
                   if (myArr[i][j][k]!="red"){
                     myArr[i][j][k] = "Candidate";
-                    draw_room(context, 'blue', 'blue', i, j, k);
-                    drawLine(context,'blue',previ,prevj,prevk,i,j,k);
-                    drawTxt(context, i, j,k);
+                    nodestodraw.push({x:i,y:j,z:k,status:'candidate',fromx:previ,fromy:prevj, fromz:prevk});
                   }
                   console.log("(" + i + ", " + j + ", " + k + ") " + myArr[i][j][k]);
                   res = Math.abs(i - j) + Math.abs(j - k) + Math.abs(k - i);
@@ -220,11 +209,11 @@ function colorNodes(one, two, three){
                     lowresk = k;
                     console.log("Moving to "+ "(" + lowresi + ", " + lowresj + ", " + lowresk + ")");
                     myArr[i][j][k] = "red";
-                    drawLine(context,'red',previ,prevj,prevk,i,j,k);
-                    draw_room(context, 'red', 'red', i, j, k);
-                    drawTxt(context, i, j,k);
-                    curr++;
-                    colorNodes(lowresi, lowresj, lowresk);
+                    nodestodraw.push({x:i,y:j,z:k,status:'red',fromx:previ,fromy:prevj, fromz:prevk});
+                    if (previ != 5 && prevj != 5 && prevk != 5){
+                      colorNodes(lowresi, lowresj, lowresk);
+                    }
+                    return;
                   }
                 }
               }
@@ -236,11 +225,11 @@ function colorNodes(one, two, three){
   }
 }
 function myGraph(){
-  for (var i = 0; i < 15; i++){
-    for (var j = 0; j < 8; j++){
-      for (var k = 0; k < 7; k++){
+  drawTxt(context, 15, 0,0);
+  for (var i = 0; i <= 15; i++){
+    for (var j = 0; j <= 8; j++){
+      for (var k = 0; k <= 7; k++){
           draw_room(context, 'gray', 'gray', i, j, k);
-          //drawLine(context,'red', i*10+10*k, j*10+10*k, i*10+10*k-5, j*10+10*k-5);
       }
     }
   }
