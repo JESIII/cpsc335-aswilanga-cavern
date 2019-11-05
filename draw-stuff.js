@@ -111,7 +111,8 @@ function createArray(length) {
     return arr;
 }
 /////////////////////////////////////////////////////////////////////////////////
-function inNodes(id){
+function inNodes(x,y,z){
+  var id = makeID(x,y,z);
   for (var i = 0; i<ntd.length; i++){
     if (id == ntd[i].id){
       return true;
@@ -121,11 +122,14 @@ function inNodes(id){
 }
 /////////////////////////////////////////////////////////////////////////////////
 var ntd = [];
+var curindex = 0;
 ntd.push({x:sx,y:sy,z:sz,status:"start",fromx:sx,fromy:sy, fromz:sz, id:makeID(sx,sy,sz)});
+curindex++;
 /////////////////////////////////////////////////////////////////////////////////
 function Pathfinder(x, y, z){
   getCandidates(x,y,z);
   ntd.push({status:"final"});
+  curindex++;
 }
 /////////////////////////////////////////////////////////////////////////////////
 function getCandidates(x,y,z){
@@ -133,8 +137,13 @@ function getCandidates(x,y,z){
     for (var j = 0; j <= 8; j++){
       for (var k = 0; k <= 7; k++){
         if (IDLimit(i,j,k) && ZeroMax(x,y,z,i,j,k) && SingleSame(i,j,k,x,y,z) && SumRule(i,j,k,x,y,z)){
-          ntd.push({x:i,y:j,z:k,status:"candidate",fromx:x,fromy:y, fromz:z, id:makeID(i,j,k)});
-          getCandidates(i,j,k);
+          if(inNodes(i,j,k)){
+            
+          }
+          else{
+            ntd.push({x:i,y:j,z:k,status:"candidate",fromx:x,fromy:y, fromz:z, id:makeID(i,j,k)});
+            getCandidates(i,j,k);
+          }
         }
       }
     }
