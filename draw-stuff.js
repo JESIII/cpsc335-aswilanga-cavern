@@ -107,7 +107,6 @@ function createArray(length) {
         var args = Array.prototype.slice.call(arguments, 1);
         while(i--) arr[length-1 - i] = createArray.apply(this, args);
     }
-
     return arr;
 }
 /////////////////////////////////////////////////////////////////////////////////
@@ -122,58 +121,69 @@ function inNodes(x,y,z){
 }
 /////////////////////////////////////////////////////////////////////////////////
 var ntd = [];
-var curindex = 0;
-ntd.push({x:sx,y:sy,z:sz,status:"start",fromx:sx,fromy:sy, fromz:sz, id:makeID(sx,sy,sz)});
-curindex++;
+var cand = [];
+ntd.push({x:sx,y:sy,z:sz,status:'start',fromx:sx,fromy:sy, fromz:sz, id:makeID(sx,sy,sz)});
+console.log(ntd);
+var nextnode;
+var lastx,lasty,lastz;
+var countz = 0;
 /////////////////////////////////////////////////////////////////////////////////
 function Pathfinder(x, y, z){
+  countz++;
+  if(countz > 100) return;
+  var thisStatus = getStatus(x,y,z);
+  if(thisStatus == 'explored'){
+    ntd.push({x:x,y:y,z:z,status:'final',fromx:x,fromy:y, fromz:z, id:makeID(x,y,z)});
+    return;
+  }
   getCandidates(x,y,z);
-  ntd.push({status:"final"});
-  curindex++;
+  nextnode = LowestResidue();
+  Pathfinder(nextnode.x, nextnode.y, nextnode.z);
 }
 /////////////////////////////////////////////////////////////////////////////////
 function getCandidates(x,y,z){
+  lastx = x,lasty = y,lastz = z;
   for (var i = 0; i <= 15; i++){
     for (var j = 0; j <= 8; j++){
       for (var k = 0; k <= 7; k++){
         if (IDLimit(i,j,k) && ZeroMax(x,y,z,i,j,k) && SingleSame(i,j,k,x,y,z) && SumRule(i,j,k,x,y,z)){
-          if(inNodes(i,j,k)){
-            
-          }
-          else{
-            ntd.push({x:i,y:j,z:k,status:"candidate",fromx:x,fromy:y, fromz:z, id:makeID(i,j,k)});
-            getCandidates(i,j,k);
-          }
+          ntd.push({x:i,y:j,z:k,status:'candidate',fromx:x,fromy:y, fromz:z, id:makeID(i,j,k)});
         }
       }
     }
   }
 }
 /////////////////////////////////////////////////////////////////////////////////
-function getResidue(x,y,z){
-  var r = Math.abs(x - y) + Math.abs(y - z) + Math.abs(z - x);
-  return r;
-}
-/////////////////////////////////////////////////////////////////////////////////
 //finds the lowest residue of all the candidates and returns the node
 function LowestResidue(){
-  console.log(ntd.length);
+  //console.log(ntd.length);
   var r = 100;
   var lowindex = 0;
   for (var i = 0; i < ntd.length; i++){
-    if (ntd[i].status == "candidate"){
+    if (ntd[i].status == 'candidate' && ntd[i].status != 'explored'){
       if (getResidue(ntd[i].x,ntd[i].y,ntd[i].z) < r){
         r = getResidue(ntd[i].x,ntd[i].y,ntd[i].z);
         lowindex = i;
       }
-      ntd[i].status = "explored";
+      ntd[i].status = 'explored';
     }
   }
-  ntd.push({x:ntd[lowindex].x,y:ntd[lowindex].y,z:ntd[lowindex].z,status:"red",fromx:ntd[lowindex].fromx,fromy:ntd[lowindex].fromy, fromz:ntd[lowindex].fromz, id:makeID(ntd[lowindex].x,ntd[lowindex].y,ntd[lowindex].z)});
-  lastx = ntd[lowindex].fromx;
-  lastx = ntd[lowindex].fromy;
-  lastx = ntd[lowindex].fromz;
+  ntd[lowindex].status = 'red';
+  //console.log("Lowest Residue Node is ");
+  //console.log(ntd[lowindex]);
   return ntd[lowindex];
+}
+/////////////////////////////////////////////////////////////////////////////////
+function getStatus(x,y,z){
+  for (var i = 0; i < ntd.length; i++){
+    if(ntd[i].x == x && ntd[i].y == y && ntd[i].z == z)
+    return ntd[i].status;
+  }
+}
+/////////////////////////////////////////////////////////////////////////////////
+function getResidue(x,y,z){
+  var r = Math.abs(x - y) + Math.abs(y - z) + Math.abs(z - x);
+  return r;
 }
 /////////////////////////////////////////////////////////////////////////////////
 //makes a 3 part id for the rooms

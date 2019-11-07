@@ -27,6 +27,7 @@ This file contains all of the html for project 2.
   Pathfinder(sx, sy, sz);
   var counter = 0;
 //FSM
+
   const loopDrawRect = setInterval(() => {
     var x = ntd[counter].x;
     var y = ntd[counter].y;
@@ -36,26 +37,30 @@ This file contains all of the html for project 2.
     var prevy = ntd[counter].fromy;
     var prevz = ntd[counter].fromz;
     var msg = "temp";
-    if(ntd[counter].status == "candidate"){
+    if(ntd[counter].status == "candidate" || ntd[counter].status == "explored"){
       draw_room(context, 'blue', 'blue', x, y, z);
       drawLine(context,'blue',prevx, prevy, prevz,x, y, z);
       drawTxt(context, x, y, z);
       msg = "Room " + msgid + " is being searched.";
+      console.log("Room " + msgid + " is being searched.");
     }
     else if(ntd[counter].status == "red"){
       draw_room(context, 'red', 'red', x, y, z);
-      //drawLine(context,'red',prevx, prevy, prevz,x, y, z);
+      drawLine(context,'red',prevx, prevy, prevz,x, y, z);
       drawTxt(context, x, y, z);
       msg = ""+msgid + " has no more rooms to explore.";
+      console.log(""+msgid + " has no more rooms to explore.");
     }
     else if(ntd[counter].status == "start"){
       draw_room(context, 'green', 'green', x, y, z);
       drawTxt(context, x, y, z);
       msg = ""+ msgid +" is the starting room.";
+      console.log(""+ msgid +" is the starting room.");
     }
     else if(ntd[counter].status == "final"){
       draw_text(context, "Exploring completed.", 800, 10 + 10*counter);
       counter = ntd.length;
+      console.log("Exploring completed.");
     }
     else{
 
@@ -67,6 +72,7 @@ This file contains all of the html for project 2.
       clearInterval(loopDrawRect);
     }
   }, 100)
+
 </script>
 
 </body>
