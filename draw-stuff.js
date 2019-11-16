@@ -7,9 +7,6 @@ var maxz = 7;
 var sx = 15;
 var sy = 0;
 var sz = 0;
-var dx = 5;
-var dy = 5;
-var dz = 5;
 var myArr = createArray(15, 8, 7);
 function draw_text( ctx, rtext, x, y )
 {
@@ -70,6 +67,9 @@ function drawTxt(ctx,x,y,z){
     case 15:
     xtxt='F';
     break;
+    default:
+    xtxt = '-';
+    break;
   }
   ctx.save( );
   context.fillStyle = 'white';
@@ -110,68 +110,113 @@ function createArray(length) {
     return arr;
 }
 /////////////////////////////////////////////////////////////////////////////////
-function inNodes(x,y,z){
-  var id = makeID(x,y,z);
-  for (var i = 0; i<ntd.length; i++){
-    if (id == ntd[i].id){
+/////////////////////////////////////////////////////////////////////////////////
+var nodes=[];
+var cand=[];
+var g = 0;
+
+var prevx='-', prevy='-', prevz='-';
+function Pathfinder(x,y,z){
+  for(var k = 0; k<nodes.length; k++){
+    if(makeID(x,y,z) == nodes[k].id){
+      if(g<nodes.length-1){
+        g++;
+        Pathfinder(nodes[g].x,nodes[g].y,nodes[g].z)
+      }
+      return;
+    }
+  }
+
+  nodes.push({x:x,y:y,z:z,fx:prevx,fy:prevy,fz:prevz,residue:getResidue(x,y,z),candidates:getCandidates(x,y,z), status: "candidate", id:makeID(x,y,z)});
+  prevx = x, prevy = y, prevz = z;
+  var node = nodes[g];
+  for (var j = 0; j<node.candidates.length; j++){
+    for(var k = 0; k<nodes.length; k++){
+      if(makeID(node.candidates[j].x,node.candidates[j].y,node.candidates[j].z) == nodes[k].id){
+        trust = false;
+      }
+      else{
+        trust = true;
+      }
+    }
+    if (trust){
+      nodes.push({x:node.candidates[j].x,y:node.candidates[j].y,z:node.candidates[j].z,fx:node.x,fy:node.y,fz:node.z,residue:getResidue(node.candidates[j].x,node.candidates[j].y,node.candidates[j].z),candidates:getCandidates(node.candidates[j].x,node.candidates[j].y,node.candidates[j].z), status: "explored",id:makeID(x,y,z)});
+    }
+  }
+  g++;
+  Pathfinder(nodes[g].x,nodes[g].y,nodes[g].z)
+}
+function Final(){
+  var lowres = 100;
+  var lownode = 0;
+  for (var k = 0; k<nodes.length; k++){
+    if (nodes[k].residue<lowres){
+      lowres = nodes[k].residue;
+      lownode = nodes[k];
+    }
+  }
+  lownode.status = "final";
+  nodes.push(lownode);
+}
+function numba2(){
+  var size = nodes.length;
+  for (var i = 0; i<size; i++){
+    for (var j = 0; j<nodes[i].candidates.length; j++){
+      var xx = nodes[i].candidates[j].x, yy = nodes[i].candidates[j].y, zz = nodes[i].candidates[j].z;
+      if (!dirty(makeID(xx,yy,zz))){
+        nodes.push({x:xx,y:yy,z:zz,residue:getResidue(xx,yy,zz),candidates:getCandidates(xx,yy,zz), dirty: 0});
+        console.log("" + xx + " " + yy + " " + zz + " is candidate" );
+        Pathfinder(xx,yy,zz);
+      }
+    }
+  }
+}
+function makedirty(id){
+  for (var i = 0; i<nodes.length; i++){
+    if (nodes[i].id == id){
+      nodes[i].dirty == 1;
+    }
+  }
+}
+function dirty(id){
+  for (var i = 0; i<nodes.length; i++){
+    if (nodes[i].id == id && nodes[i].dirty == 1){
       return true;
     }
   }
   return false;
 }
-/////////////////////////////////////////////////////////////////////////////////
-var ntd = [];
-var cand = [];
-ntd.push({x:sx,y:sy,z:sz,status:'start',fromx:sx,fromy:sy, fromz:sz, id:makeID(sx,sy,sz)});
-console.log(ntd);
-var nextnode;
-var lastx,lasty,lastz;
-var countz = 0;
-/////////////////////////////////////////////////////////////////////////////////
-function Pathfinder(x, y, z){
-  countz++;
-  if(countz > 100) return;
-  var thisStatus = getStatus(x,y,z);
-  if(thisStatus == 'explored'){
-    ntd.push({x:x,y:y,z:z,status:'final',fromx:x,fromy:y, fromz:z, id:makeID(x,y,z)});
-    return;
-  }
-  getCandidates(x,y,z);
-  nextnode = LowestResidue();
-  Pathfinder(nextnode.x, nextnode.y, nextnode.z);
-}
-/////////////////////////////////////////////////////////////////////////////////
 function getCandidates(x,y,z){
-  lastx = x,lasty = y,lastz = z;
+  cand = [];
   for (var i = 0; i <= 15; i++){
     for (var j = 0; j <= 8; j++){
       for (var k = 0; k <= 7; k++){
         if (IDLimit(i,j,k) && ZeroMax(x,y,z,i,j,k) && SingleSame(i,j,k,x,y,z) && SumRule(i,j,k,x,y,z)){
-          ntd.push({x:i,y:j,z:k,status:'candidate',fromx:x,fromy:y, fromz:z, id:makeID(i,j,k)});
+          cand.push({x:i,y:j,z:k,fx:x,fy:y,fz:z,residue:getResidue(i,j,k)});
         }
       }
     }
   }
+  return cand;
 }
 /////////////////////////////////////////////////////////////////////////////////
 //finds the lowest residue of all the candidates and returns the node
 function LowestResidue(){
-  //console.log(ntd.length);
+  console.log("From node: " + cand[0].fromx + cand[0].fromy + cand[0].fromz);
   var r = 100;
-  var lowindex = 0;
-  for (var i = 0; i < ntd.length; i++){
-    if (ntd[i].status == 'candidate' && ntd[i].status != 'explored'){
-      if (getResidue(ntd[i].x,ntd[i].y,ntd[i].z) < r){
-        r = getResidue(ntd[i].x,ntd[i].y,ntd[i].z);
-        lowindex = i;
-      }
-      ntd[i].status = 'explored';
+  var low;
+  var tester;
+  while(cand.length > 0){
+    tester = cand.pop();
+    console.log(tester);
+    if (tester.residue < r){
+      r = tester.residue;
+      low = tester;
     }
   }
-  ntd[lowindex].status = 'red';
-  //console.log("Lowest Residue Node is ");
-  //console.log(ntd[lowindex]);
-  return ntd[lowindex];
+
+  console.log("To node: " + low.x + low.y + low.z);
+  return low;
 }
 /////////////////////////////////////////////////////////////////////////////////
 function getStatus(x,y,z){
@@ -242,11 +287,9 @@ function makeID(x,y,z){
   return xtxt + y + z;
 }
 /////////////////////////////////////////////////////////////////////////////////
-//checks if node passes zero-max rule
+//checks if node 0passes zero-max rule
 function ZeroMax(x,y,z,i,j,k){
-  if((x == 0 || x == maxx) && x!=i)return true;
-  else if((y == 0 || y == maxy) && y!=j)return true;
-  else if((z == 0 || z == maxz) && z!=k)return true;
+  if(((i == 0 || i == maxx) && x!=i) || ((j == 0 || j == maxy) && j!=y) || ((k == 0 || k == maxz) && z!=k))return true;
   else return false;
 }
 //Checks if node being checked passes the sum rule
@@ -263,7 +306,7 @@ function SingleSame(x,y,z,x1,y1,z1){
 }
 //checks if room is within the cave system
 function IDLimit(x,y,z){
-  if (x <= maxx && y <= maxy && z <= maxz) return true;
+  if (x <= maxx && y <= maxy && z <= maxz && z>=0 && x>=0 && y>=0) return true;
   else return false;
 }
 //draws grey "unknown" cave rooms within the cave system.
