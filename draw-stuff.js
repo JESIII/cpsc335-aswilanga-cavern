@@ -11,69 +11,16 @@ var nodes = createArray(16, 9, 8);
 function draw_text( ctx, rtext, x, y )
 {
     ctx.save( );
-    context.fillStyle = 'lightgrey'
+    context.fillStyle = 'white'
     context.font = "10px Arial"
     context.fillText( rtext, x, y);
     ctx.restore( );
 }
 function drawTxt(ctx,x,y,z){
-  var xtxt;
-  switch(x){
-    case 0:
-    xtxt='0';
-    break;
-    case 1:
-    xtxt='1';
-    break;
-    case 2:
-    xtxt='2';
-    break;
-    case 3:
-    xtxt='3';
-    break;
-    case 4:
-    xtxt='4';
-    break;
-    case 5:
-    xtxt='5';
-    break;
-    case 6:
-    xtxt='6';
-    break;
-    case 7:
-    xtxt='7';
-    break;
-    case 8:
-    xtxt='8';
-    break;
-    case 9:
-    xtxt='9';
-    break;
-    case 10:
-    xtxt='A';
-    break;
-    case 11:
-    xtxt='B';
-    break;
-    case 12:
-    xtxt='C';
-    break;
-    case 13:
-    xtxt='D';
-    break;
-    case 14:
-    xtxt='E';
-    break;
-    case 15:
-    xtxt='F';
-    break;
-    default:
-    xtxt = '-';
-    break;
-  }
+  var xtxt = makeID(x,y,z);
   ctx.save( );
   context.fillStyle = 'white';
-  ctx.fillText( xtxt + y + z, x*40+20+z*40, y*40+20+z*40-4);
+  ctx.fillText( xtxt, x*40+20+z*40, y*40+20+z*40-4);
   ctx.restore( );
 }
 function createArray(length) {
@@ -173,8 +120,8 @@ async function getCandidates(x,y,z){
       for (var k = 0; k <= 7; k++){
         if (IDLimit(i,j,k) && ZeroMax(x,y,z,i,j,k) && SingleSame(i,j,k,x,y,z) && SumRule(i,j,k,x,y,z)){
           if(nodes[i][j][k].status!="visited" && nodes[i][j][k].status!="cand"){
-            nodes[i][j][k] = {fx:x,fy:y,fz:z,status:"cand",residue:getResidue(i,j,k), candidates:0, id:makeID(i,j,k)};
-            console.log("Node: " + i +","+j+","+k + " status: " + nodes[i][j][k].status + " From: " +x+''+y+''+z);
+            nodes[i][j][k] = {fx:x,fy:y,fz:z,status:"cand",residue:getResidue(i,j,k), id:makeID(i,j,k),x:i,y:j,z:k};
+            console.log("Node: " + nodes[i][j][k].id + " status: " + nodes[i][j][k].status + " From: " +makeID(x,y,z));
             Pathfinder(i,j,k);
           }
         }
@@ -186,7 +133,7 @@ function printNodes(){
   for (var i = 0; i <= 15; i++){
     for (var j = 0; j <= 8; j++){
       for (var k = 0; k <= 7; k++){
-        console.log("Node: " + i +","+j+","+k + " status: " + nodes[i][j][k].status + " From: " )
+        console.log("Node: " + nodes[i][j][k].id + " status: " + nodes[i][j][k].status + " From: " )
       }
     }
   }

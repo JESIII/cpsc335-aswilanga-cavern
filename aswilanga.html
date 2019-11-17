@@ -29,69 +29,47 @@ This file contains all of the html for project 2.
   //Pathfinder(sx,sy,sz);
   makePath(sx,sy,sz);
   //console.log(nodes);
-  var counter = 0;
+  var counter = path.length - 2;
+  var cc = 0;
 
 //FSM
-/*
-  const loopDrawRect = setInterval(() => {
 
-    var x = nodes[counter].x;
-    var y = nodes[counter].y;
-    var z = nodes[counter].z;
-    var msgid = makeID(x,y,z);
-    var prevx = nodes[counter].fx;
-    var prevy = nodes[counter].fy;
-    var prevz = nodes[counter].fz;
-    var msg = "temp";/*
-    if(nodes[counter].status == "candidate"){
-      draw_room(context, 'blue', 'blue', x, y, z);
-      //drawLine(context,'blue',prevx, prevy, prevz,x, y, z);
+  const loopDrawRect = setInterval(() => {
+    var x = path[counter].x;
+    var y = path[counter].y;
+    var z = path[counter].z;
+    var prevx = path[counter].fx;
+    var prevy = path[counter].fy;
+    var prevz = path[counter].fz;
+    var msg = "temp";
+    if(path[counter].id == "F00"){
+      draw_room(context, 'yellow', 'yellow', x, y, z);
       drawTxt(context, x, y, z);
-      msg = "Now Searching " + msgid;
-      console.log("Now Searching " + msgid);
+      msg = "Path Start: " + path[counter].id;
+      console.log("Starting at: " + path[counter].id);
     }
-    else if(nodes[counter].status == "explored"){
-      draw_room(context, 'red', 'red', x, y, z);
-      drawLine(context,'red',prevx, prevy, prevz,x, y, z);
+    else if (counter == 0){
+      draw_room(context, 'yellow', 'yellow', x, y, z);
+      drawLine(context,'yellow',prevx, prevy, prevz,x, y, z);
       drawTxt(context, x, y, z);
-      msg = "Move to "+msgid + " from " + makeID(prevx,prevy,prevz);
-      console.log(""+msgid + " ");
+      msg = "Final, center most node: "+path[counter].id;
+      console.log("Final, center most node: "+path[counter].id);
     }
-    else if(nodes[counter].status == "start"){
-      draw_room(context, 'green', 'green', x, y, z);
+    else{
+      draw_room(context, 'yellow', 'yellow', x, y, z);
+      drawLine(context,'yellow',prevx, prevy, prevz,x, y, z);
       drawTxt(context, x, y, z);
-      msg = ""+ msgid +" is the starting room.";
-      console.log(""+ msgid +" is the starting room.");
+      msg = "Move to "+path[counter].id;
+      console.log("Move to "+path[counter].id);
     }
-    else if(nodes[counter].status == "final"){
-      draw_text(context, "Center Most Node: "+msgid, 900, 10 + 10*counter);
-      draw_room(context, 'green', 'green', x, y, z);
-      msg = "Center Most Node: "+msgid;
-      console.log("Center Most Node: "+msgid);
-    }
-    draw_text(context, msg, 900, 10 + 10*counter);
-    counter += 1;
-    if (counter == nodes.length -1){
-      for (var i = path.length-1; i>0;i--){
-        var x = path[i].x;
-        var y = path[i].y;
-        var z = path[i].z;
-        var msgid = makeID(x,y,z);
-        if (i == path.length-1){
-          draw_room(context, 'lightblue', 'lightblue', x, y, z);
-        }
-        else{
-          var prevx = path[i+1].x;
-          var prevy = path[i+1].y;
-          var prevz = path[i+1].z;
-          draw_room(context, 'lightblue', 'lightblue', x, y, z);
-          drawLine(context,'lightblue',prevx, prevy, prevz,x, y, z);
-        }
-      }
+    draw_text(context, msg, 900, 10 + 10*cc);
+    cc++
+    counter--;
+    if (counter == -1){
       clearInterval(loopDrawRect);
     }
-  }, 50)
-*/
+  }, 500)
+
 </script>
 
 </body>
