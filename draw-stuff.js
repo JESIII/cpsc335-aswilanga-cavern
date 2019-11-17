@@ -110,13 +110,13 @@ function createArray(length) {
     return arr;
 }
 /////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
 var nodes=[];
 var cand=[];
 var g = 0;
 
 var prevx='-', prevy='-', prevz='-';
 function Pathfinder(x,y,z){
+
   for(var k = 0; k<nodes.length; k++){
     if(makeID(x,y,z) == nodes[k].id){
       if(g<nodes.length-1){
@@ -146,6 +146,7 @@ function Pathfinder(x,y,z){
   g++;
   Pathfinder(nodes[g].x,nodes[g].y,nodes[g].z)
 }
+var path = [];
 function Final(){
   var lowres = 100;
   var lownode = 0;
@@ -157,17 +158,17 @@ function Final(){
   }
   lownode.status = "final";
   nodes.push(lownode);
-}
-function numba2(){
-  var size = nodes.length;
-  for (var i = 0; i<size; i++){
-    for (var j = 0; j<nodes[i].candidates.length; j++){
-      var xx = nodes[i].candidates[j].x, yy = nodes[i].candidates[j].y, zz = nodes[i].candidates[j].z;
-      if (!dirty(makeID(xx,yy,zz))){
-        nodes.push({x:xx,y:yy,z:zz,residue:getResidue(xx,yy,zz),candidates:getCandidates(xx,yy,zz), dirty: 0});
-        console.log("" + xx + " " + yy + " " + zz + " is candidate" );
-        Pathfinder(xx,yy,zz);
+  path.push(lownode);
+  for(var i = 0; i<nodes.length-1; i++){
+    if(makeID(lownode.fx,lownode.fy,lownode.fz) == nodes[i].id){
+      lownode = nodes[i];
+      path.push(lownode);
+      i = 0;
+      if(lownode.fx == 15 && lownode.fy == 0 && lownode.fz == 0){
+        path.push({x:lownode.fx,y:lownode.fy,z:lownode.fz,residue:getResidue(lownode.fx,lownode.fy,lownode.fz),id:makeID(lownode.fx,lownode.fy,lownode.fz)})
+        return;
       }
+      //break;
     }
   }
 }

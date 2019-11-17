@@ -27,6 +27,7 @@ This file contains all of the html for project 2.
   Pathfinder(sx,sy,sz);
   Final();
   console.log(nodes);
+  console.log(path);
   var counter = 0;
   //console.log(nodes);
 //FSM
@@ -66,12 +67,28 @@ This file contains all of the html for project 2.
       console.log("Center Most Node: "+msgid);
     }
     draw_text(context, msg, 900, 10 + 10*counter);
-    //console.log(msg);
     counter += 1;
     if (counter == nodes.length -1){
+      for (var i = path.length-1; i>0;i--){
+        var x = path[i].x;
+        var y = path[i].y;
+        var z = path[i].z;
+        var msgid = makeID(x,y,z);
+        if (i == path.length-1){
+          draw_room(context, 'lightblue', 'lightblue', x, y, z);
+        }
+        else{
+          var prevx = path[i+1].x;
+          var prevy = path[i+1].y;
+          var prevz = path[i+1].z;
+          draw_room(context, 'lightblue', 'lightblue', x, y, z);
+          drawLine(context,'lightblue',prevx, prevy, prevz,x, y, z);
+        }
+        //drawTxt(context, x, y, z);
+      }
       clearInterval(loopDrawRect);
     }
-  }, 200)
+  }, 50)
 
 </script>
 
