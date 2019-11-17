@@ -11,6 +11,8 @@ This file contains all of the html for project 2.
 
 <!DOCTYPE html>
 <head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
 <title>Great Aswilanga Caverns</title>
 <link rel="stylesheet" href="./styles.css">
 </head>
@@ -24,14 +26,15 @@ This file contains all of the html for project 2.
   var canvas = document.getElementById( "rotation" );
   var context = canvas.getContext( "2d" );
   myGraph();
-  Pathfinder(sx,sy,sz);
-  Final();
-  console.log(nodes);
-  console.log(path);
-  var counter = 0;
+  //Pathfinder(sx,sy,sz);
+  makePath(sx,sy,sz);
   //console.log(nodes);
+  var counter = 0;
+
 //FSM
+/*
   const loopDrawRect = setInterval(() => {
+
     var x = nodes[counter].x;
     var y = nodes[counter].y;
     var z = nodes[counter].z;
@@ -39,7 +42,7 @@ This file contains all of the html for project 2.
     var prevx = nodes[counter].fx;
     var prevy = nodes[counter].fy;
     var prevz = nodes[counter].fz;
-    var msg = "temp";
+    var msg = "temp";/*
     if(nodes[counter].status == "candidate"){
       draw_room(context, 'blue', 'blue', x, y, z);
       //drawLine(context,'blue',prevx, prevy, prevz,x, y, z);
@@ -84,12 +87,11 @@ This file contains all of the html for project 2.
           draw_room(context, 'lightblue', 'lightblue', x, y, z);
           drawLine(context,'lightblue',prevx, prevy, prevz,x, y, z);
         }
-        //drawTxt(context, x, y, z);
       }
       clearInterval(loopDrawRect);
     }
   }, 50)
-
+*/
 </script>
 
 </body>

@@ -7,7 +7,7 @@ var maxz = 7;
 var sx = 15;
 var sy = 0;
 var sz = 0;
-var myArr = createArray(15, 8, 7);
+var nodes = createArray(16, 9, 8);
 function draw_text( ctx, rtext, x, y )
 {
     ctx.save( );
@@ -76,6 +76,16 @@ function drawTxt(ctx,x,y,z){
   ctx.fillText( xtxt + y + z, x*40+20+z*40, y*40+20+z*40-4);
   ctx.restore( );
 }
+function createArray(length) {
+    var arr = new Array(length || 0),
+        i = length;
+
+    if (arguments.length > 1) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        while(i--) arr[length-1 - i] = createArray.apply(this, args);
+    }
+    return arr;
+}
 async function draw_room(ctx, stroke,fill, x, y, z)
 {
     stroke = stroke || 'lightgrey';
@@ -99,107 +109,89 @@ function drawLine(ctx, stroke, x1, y1,z1, x2,y2,z2){
     ctx.restore();
 }
 /////////////////////////////////////////////////////////////////////////////////
-function createArray(length) {
-    var arr = new Array(length || 0),
-        i = length;
-
-    if (arguments.length > 1) {
-        var args = Array.prototype.slice.call(arguments, 1);
-        while(i--) arr[length-1 - i] = createArray.apply(this, args);
-    }
-    return arr;
-}
-/////////////////////////////////////////////////////////////////////////////////
-var nodes=[];
-var cand=[];
-var g = 0;
-
-var prevx='-', prevy='-', prevz='-';
-function Pathfinder(x,y,z){
-
-  for(var k = 0; k<nodes.length; k++){
-    if(makeID(x,y,z) == nodes[k].id){
-      if(g<nodes.length-1){
-        g++;
-        Pathfinder(nodes[g].x,nodes[g].y,nodes[g].z)
-      }
-      return;
+for(var i = 0; i<=15;i++){
+  for(var j = 0; j<=8;j++){
+    for(var k = 0; k<=7;k++){
+      nodes[i][j][k] = {fx:0,fy:0,fz:0,status:"unvisited",residue:100, candidates:0, id:makeID(i,j,k)};
     }
   }
-
-  nodes.push({x:x,y:y,z:z,fx:prevx,fy:prevy,fz:prevz,residue:getResidue(x,y,z),candidates:getCandidates(x,y,z), status: "candidate", id:makeID(x,y,z)});
-  prevx = x, prevy = y, prevz = z;
-  var node = nodes[g];
-  for (var j = 0; j<node.candidates.length; j++){
-    for(var k = 0; k<nodes.length; k++){
-      if(makeID(node.candidates[j].x,node.candidates[j].y,node.candidates[j].z) == nodes[k].id){
-        trust = false;
-      }
-      else{
-        trust = true;
-      }
-    }
-    if (trust){
-      nodes.push({x:node.candidates[j].x,y:node.candidates[j].y,z:node.candidates[j].z,fx:node.x,fy:node.y,fz:node.z,residue:getResidue(node.candidates[j].x,node.candidates[j].y,node.candidates[j].z),candidates:getCandidates(node.candidates[j].x,node.candidates[j].y,node.candidates[j].z), status: "explored",id:makeID(x,y,z)});
-    }
-  }
-  g++;
-  Pathfinder(nodes[g].x,nodes[g].y,nodes[g].z)
 }
 var path = [];
-function Final(){
-  var lowres = 100;
-  var lownode = 0;
-  for (var k = 0; k<nodes.length; k++){
-    if (nodes[k].residue<lowres){
-      lowres = nodes[k].residue;
-      lownode = nodes[k];
-    }
-  }
-  lownode.status = "final";
-  nodes.push(lownode);
-  path.push(lownode);
-  for(var i = 0; i<nodes.length-1; i++){
-    if(makeID(lownode.fx,lownode.fy,lownode.fz) == nodes[i].id){
-      lownode = nodes[i];
-      path.push(lownode);
-      i = 0;
-      if(lownode.fx == 15 && lownode.fy == 0 && lownode.fz == 0){
-        path.push({x:lownode.fx,y:lownode.fy,z:lownode.fz,residue:getResidue(lownode.fx,lownode.fy,lownode.fz),id:makeID(lownode.fx,lownode.fy,lownode.fz)})
-        return;
-      }
-      //break;
-    }
-  }
+var lnode = 0;
+async function finish(){
+  console.log(nodes);
+  console.log(path);
 }
-function makedirty(id){
-  for (var i = 0; i<nodes.length; i++){
-    if (nodes[i].id == id){
-      nodes[i].dirty == 1;
-    }
-  }
+var test = 0;
+async function makePath2(incomingnode){
+
+  console.log("Path "+test+' '+incomingnode.id)
+  var nextnode = nodes[incomingnode.fx][incomingnode.fy][incomingnode.fz];
+  path.push(nextnode);
+  if(incomingnode.id == "F00")return;
+  test++;
+  makePath2(nextnode);
 }
-function dirty(id){
-  for (var i = 0; i<nodes.length; i++){
-    if (nodes[i].id == id && nodes[i].dirty == 1){
-      return true;
-    }
-  }
-  return false;
+function makePath(x,y,z){
+  lowestRes(x,y,z);
+  var incomingnode = lnode;
+  makePath2(incomingnode)
 }
-function getCandidates(x,y,z){
-  cand = [];
+/////////////////////////////////////////////////////////////////////////////////
+async function lowestRes(x,y,z){
+  Pathfinder(x,y,z);
+  var lr = 100;
+  var lx = 0;
+  var ly = 0;
+  var lz = 0;
   for (var i = 0; i <= 15; i++){
     for (var j = 0; j <= 8; j++){
       for (var k = 0; k <= 7; k++){
-        if (IDLimit(i,j,k) && ZeroMax(x,y,z,i,j,k) && SingleSame(i,j,k,x,y,z) && SumRule(i,j,k,x,y,z)){
-          cand.push({x:i,y:j,z:k,fx:x,fy:y,fz:z,residue:getResidue(i,j,k)});
+        if(nodes[i][j][k].residue < lr){
+          lnode = nodes[i][j][k];
+          lx = i
+          ly = j
+          lz = k
+          lr = nodes[i][j][k].residue;
+          console.log("Lower Residue at "+i +''+j+''+k)
         }
       }
     }
   }
-  return cand;
+  console.log("Center Most Node: " + lx +''+ly+''+lz)
+  path.push(lnode);
 }
+async function Pathfinder(x,y,z){
+  nodes[x][y][z].status == "visited";
+  getCandidates(x,y,z);
+}
+
+async function getCandidates(x,y,z){
+  console.log("Get cands from: "+x+''+y+''+z);
+  for (var i = 0; i <= 15; i++){
+    for (var j = 0; j <= 8; j++){
+      for (var k = 0; k <= 7; k++){
+        if (IDLimit(i,j,k) && ZeroMax(x,y,z,i,j,k) && SingleSame(i,j,k,x,y,z) && SumRule(i,j,k,x,y,z)){
+          if(nodes[i][j][k].status!="visited" && nodes[i][j][k].status!="cand"){
+            nodes[i][j][k] = {fx:x,fy:y,fz:z,status:"cand",residue:getResidue(i,j,k), candidates:0, id:makeID(i,j,k)};
+            console.log("Node: " + i +","+j+","+k + " status: " + nodes[i][j][k].status + " From: " +x+''+y+''+z);
+            Pathfinder(i,j,k);
+          }
+        }
+      }
+    }
+  }
+}
+function printNodes(){
+  for (var i = 0; i <= 15; i++){
+    for (var j = 0; j <= 8; j++){
+      for (var k = 0; k <= 7; k++){
+        console.log("Node: " + i +","+j+","+k + " status: " + nodes[i][j][k].status + " From: " )
+      }
+    }
+  }
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 //finds the lowest residue of all the candidates and returns the node
 function LowestResidue(){
