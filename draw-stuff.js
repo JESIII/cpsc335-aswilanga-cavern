@@ -65,11 +65,8 @@ for(var i = 0; i<=15;i++){
 }
 var path = [];
 var lnode = 0;
-async function finish(){
-  console.log(nodes);
-  console.log(path);
-}
 var test = 0;
+var printnodes = [];
 async function makePath2(incomingnode){
 
   console.log("Path "+test+' '+incomingnode.id)
@@ -110,6 +107,7 @@ async function lowestRes(x,y,z){
 }
 async function Pathfinder(x,y,z){
   nodes[x][y][z].status == "visited";
+  //printnodes.push({fx:0,fy:0,fz:0,status:"visited",residue:getResidue(15,0,0), id:makeID(15,0,0),x:15,y:0,z:0})
   getCandidates(x,y,z);
 }
 
@@ -121,6 +119,7 @@ async function getCandidates(x,y,z){
         if (IDLimit(i,j,k) && ZeroMax(x,y,z,i,j,k) && SingleSame(i,j,k,x,y,z) && SumRule(i,j,k,x,y,z)){
           if(nodes[i][j][k].status!="visited" && nodes[i][j][k].status!="cand"){
             nodes[i][j][k] = {fx:x,fy:y,fz:z,status:"cand",residue:getResidue(i,j,k), id:makeID(i,j,k),x:i,y:j,z:k};
+            printnodes.push({fx:x,fy:y,fz:z,status:"cand",residue:getResidue(i,j,k), id:makeID(i,j,k),x:i,y:j,z:k})
             console.log("Node: " + nodes[i][j][k].id + " status: " + nodes[i][j][k].status + " From: " +makeID(x,y,z));
             Pathfinder(i,j,k);
           }

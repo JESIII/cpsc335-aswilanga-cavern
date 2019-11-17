@@ -33,7 +33,12 @@ This file contains all of the html for project 2.
   var cc = 0;
 
 //FSM
-
+console.log(printnodes);
+console.log(path);
+for(var i = path.length-1; i>-1;i--){
+  printnodes.push(path[i]);
+}
+console.log(printnodes);
   const loopDrawRect = setInterval(() => {
     var x = path[counter].x;
     var y = path[counter].y;
@@ -68,7 +73,7 @@ This file contains all of the html for project 2.
     if (counter == -1){
       clearInterval(loopDrawRect);
     }
-  }, 500)
+  }, 20)
 
 </script>
 
