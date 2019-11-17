@@ -1,12 +1,21 @@
-// The `links` array contains objects with a `source` and a `target`
-// property. The values of those properties are the indices in
-// the `nodes` array of the two endpoints of the link.
+/*
+John Scales
+CWID 888865730
+Class Number 335-04
+13602 Loumont st.
+Whittier, CA 90601
+17 November 2019
+Aswilanga Cavern
+This file contains most of the js for project 2
+*/
+//room limits and starting values as given
 var maxx = 15;
 var maxy = 8;
 var maxz = 7;
 var sx = 15;
 var sy = 0;
 var sz = 0;
+//make 3d array of the cavern rooms
 var nodes = createArray(16, 9, 8);
 function draw_text( ctx, rtext, x, y )
 {
@@ -56,10 +65,11 @@ function drawLine(ctx, stroke, x1, y1,z1, x2,y2,z2){
     ctx.restore();
 }
 /////////////////////////////////////////////////////////////////////////////////
+//gives the 3d array of the aswilanga caverns temp values
 for(var i = 0; i<=15;i++){
   for(var j = 0; j<=8;j++){
     for(var k = 0; k<=7;k++){
-      nodes[i][j][k] = {fx:0,fy:0,fz:0,status:"unvisited",residue:100, candidates:0, id:makeID(i,j,k)};
+      nodes[i][j][k] = {fx:0,fy:0,fz:0,status:"unvisited",residue:100, id:makeID(i,j,k)};
     }
   }
 }
@@ -67,8 +77,8 @@ var path = [];
 var lnode = 0;
 var test = 0;
 var printnodes = [];
+//finds a path backwards from the lowest residue node, back to the start node.
 async function makePath2(incomingnode){
-
   console.log("Path "+test+' '+incomingnode.id)
   var nextnode = nodes[incomingnode.fx][incomingnode.fy][incomingnode.fz];
   path.push(nextnode);
@@ -76,12 +86,15 @@ async function makePath2(incomingnode){
   test++;
   makePath2(nextnode);
 }
+//starting function that adds the first node and sets it to visited.
 function makePath(x,y,z){
+  nodes[x][y][z] = {fx:15,fy:0,fz:0,status:"visited",residue:getResidue(x,y,z), id:makeID(x,y,z),x:x,y:y,z:z}
   lowestRes(x,y,z);
   var incomingnode = lnode;
   makePath2(incomingnode)
 }
 /////////////////////////////////////////////////////////////////////////////////
+//gets the lowest residue (center most) nodes from the array (checks accessable "visited"or "cand" nodes only)
 async function lowestRes(x,y,z){
   Pathfinder(x,y,z);
   var lr = 100;
@@ -105,12 +118,12 @@ async function lowestRes(x,y,z){
   console.log("Center Most Node: " + lx +''+ly+''+lz)
   path.push(lnode);
 }
+//sets node status to visited then gets candidates of that node
 async function Pathfinder(x,y,z){
   nodes[x][y][z].status == "visited";
-  //printnodes.push({fx:0,fy:0,fz:0,status:"visited",residue:getResidue(15,0,0), id:makeID(15,0,0),x:15,y:0,z:0})
   getCandidates(x,y,z);
 }
-
+//gets all the candidates (accessables nodes) from a given node
 async function getCandidates(x,y,z){
   console.log("Get cands from: "+x+''+y+''+z);
   for (var i = 0; i <= 15; i++){
@@ -128,6 +141,7 @@ async function getCandidates(x,y,z){
     }
   }
 }
+//unused
 function printNodes(){
   for (var i = 0; i <= 15; i++){
     for (var j = 0; j <= 8; j++){
